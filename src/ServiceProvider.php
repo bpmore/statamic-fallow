@@ -6,6 +6,11 @@ namespace Bpmore\Fallow;
 
 use Bpmore\Fallow\Analysis\Auditor;
 use Bpmore\Fallow\Analysis\BlueprintWalker;
+use Bpmore\Fallow\Analysis\Scope;
+use Bpmore\Fallow\Analysis\UnknownScope;
+use Illuminate\Http\Request;
+use Statamic\Facades\Collection;
+use Statamic\Facades\Utility;
 use Statamic\Providers\AddonServiceProvider;
 
 /**
@@ -49,5 +54,59 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../config/fallow.php' => config_path('fallow.php'),
         ], 'fallow-config');
+
+        // Registering a utility gives it an `access fallow utility`
+        // permission of its own, and the route is gated by that. The page
+        // is read-only, so that one permission is the whole of its access
+        // control.
+        Utility::extend(fn () => Utility::register('fallow')
+            ->title('Fallow')
+            ->navTitle('Fallow')
+            ->icon('nature-leaf')
+            ->description('Find blueprint fields your content never uses.')
+            ->view('fallow::utility', fn (Request $request) => $this->utilityData($request)));
+    }
+
+    /**
+     * The audit, run while the page loads, unless the site is too big for
+     * that. Spec section 7.
+     *
+     * @return array<string, mixed>
+     */
+    private function utilityData(Request $request): array
+    {
+        $collection = $request->query('collection');
+        $collection = is_string($collection) && $collection !== '' ? $collection : null;
+
+        $collections = Collection::all()->map->handle()->sort()->values()->all();
+        $limit = (int) config('fallow.cp_entry_limit', 5000);
+
+        $data = [
+            'collections' => $collections,
+            'collection' => $collection,
+            'limit' => $limit,
+            'unknown' => null,
+            'tooMany' => null,
+            'report' => null,
+        ];
+
+        if ($collection !== null && ! in_array($collection, $collections, true)) {
+            return ['unknown' => $collection] + $data;
+        }
+
+        $auditor = $this->app->make(Auditor::class);
+        $scope = new Scope($collection === null ? [] : [$collection], [], (float) config('fallow.min_fill', 0.05));
+
+        try {
+            $count = $auditor->countEntries($scope);
+
+            if ($count > $limit) {
+                return ['tooMany' => $count] + $data;
+            }
+
+            return ['report' => $auditor->audit($scope)->toArray()] + $data;
+        } catch (UnknownScope $e) {
+            return ['unknown' => $e->getMessage()] + $data;
+        }
     }
 }
