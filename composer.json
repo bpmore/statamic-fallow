@@ -1,0 +1,60 @@
+{
+    "name": "bpmore/statamic-fallow",
+    "description": "Reports content model drift in a Statamic site: which blueprint fields real content fills, which are dead weight, and which entry keys no blueprint field claims.",
+    "keywords": [
+        "statamic",
+        "blueprint",
+        "audit",
+        "content-model",
+        "drift"
+    ],
+    "license": "proprietary",
+    "type": "statamic-addon",
+    "homepage": "https://hada.farm",
+    "authors": [
+        {
+            "name": "Brent Passmore",
+            "homepage": "https://hada.farm"
+        }
+    ],
+    "require": {
+        "php": "^8.2",
+        "statamic/cms": "^6.27"
+    },
+    "require-dev": {
+        "orchestra/testbench": "^10.11 || ^11.0",
+        "pestphp/pest": "^3.8 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bpmore\\Fallow\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bpmore\\Fallow\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "pest"
+    },
+    "extra": {
+        "statamic": {
+            "name": "Fallow",
+            "slug": "statamic-fallow"
+        },
+        "laravel": {
+            "providers": [
+                "Bpmore\\Fallow\\ServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true
+}
