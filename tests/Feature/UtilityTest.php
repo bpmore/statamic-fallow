@@ -31,6 +31,40 @@ function fallowPage(string $query = ''): string
     return html_entity_decode((string) $page['props']['html'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
 }
 
+/**
+ * Statamic hands the utility's HTML to Vue as a template, where an unclosed
+ * tag is a compile error that shows as a blank page and never as a server
+ * exception. Vue's template syntax is close enough to XML that parsing the
+ * markup as XML, with bare boolean attributes given a value, catches it here.
+ */
+function assertVueTemplateIsWellFormed(string $html): void
+{
+    $xml = preg_replace_callback('/<[a-z][\w-]*(\s[^<>]*)?\/?>/i', function ($m) {
+        return preg_replace_callback(
+            '/(\s)([a-z][\w:@.-]*)(="[^"]*")?/i',
+            fn ($a) => $a[1].$a[2].($a[3] ?? '="'.$a[2].'"'),
+            $m[0],
+        );
+    }, $html);
+    $xml = str_replace('&', '&amp;', (string) $xml);
+
+    $previous = libxml_use_internal_errors(true);
+    $ok = simplexml_load_string('<root>'.$xml.'</root>') !== false;
+    $errors = array_map(fn ($e) => trim($e->message).' (line '.$e->line.')', libxml_get_errors());
+    libxml_clear_errors();
+    libxml_use_internal_errors($previous);
+
+    expect($ok)->toBeTrue('the template is not well formed, so Vue would not compile it: '.implode('; ', $errors));
+}
+
+test('every state of the page is markup Vue can compile', function () {
+    assertVueTemplateIsWellFormed(fallowPage());
+    assertVueTemplateIsWellFormed(fallowPage('collection=nope'));
+
+    config()->set('fallow.cp_entry_limit', 1);
+    assertVueTemplateIsWellFormed(fallowPage());
+});
+
 test('the utility is registered with its handle, titles, description, and an icon', function () {
     $utility = Utility::boot()->find('fallow');
 
