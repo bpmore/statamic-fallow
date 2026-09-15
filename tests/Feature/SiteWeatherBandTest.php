@@ -6,6 +6,7 @@ use Bpmore\Fallow\Weather\ContentModelContributor;
 use Bpmore\SiteWeather\Contracts\WeatherContributor;
 use Bpmore\SiteWeather\Contributors;
 use Bpmore\SiteWeather\Forecast;
+use Bpmore\SiteWeather\Reading;
 use Bpmore\SiteWeather\State;
 use Illuminate\Support\Facades\Artisan;
 use Statamic\Facades\Utility;
@@ -30,7 +31,7 @@ afterEach(function () {
     }
 });
 
-function contentModelBand(): \Bpmore\SiteWeather\Reading
+function contentModelBand(): Reading
 {
     return app(ContentModelContributor::class)->reading();
 }
