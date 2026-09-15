@@ -53,8 +53,10 @@ test('--fail-on=sparse honours --min-fill', function () {
 });
 
 test('--fail-on takes a comma list', function () {
-    expect(Artisan::call('statamic:fallow:audit', ['--collection' => ['products'], '--fail-on' => 'orphans,dead']))->toBe(0)
-        ->and(Artisan::call('statamic:fallow:audit', ['--collection' => ['pages'], '--fail-on' => 'orphans,sparse']))->toBe(1);
+    // products has no orphans and nothing sparse, but the title field
+    // Statamic adds to every entry blueprint is dead there.
+    expect(Artisan::call('statamic:fallow:audit', ['--collection' => ['products'], '--fail-on' => 'orphans,sparse']))->toBe(0)
+        ->and(Artisan::call('statamic:fallow:audit', ['--collection' => ['products'], '--fail-on' => 'orphans,dead']))->toBe(1);
 });
 
 test('an unknown collection handle exits 2', function () {
