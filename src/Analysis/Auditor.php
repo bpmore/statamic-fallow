@@ -142,10 +142,15 @@ final class Auditor
     {
         // Every blueprint the collection has, walked once. A blueprint no
         // entry uses still reports, with every field never instantiated.
+        //
+        // Resolved through entryBlueprint() rather than taken from the list,
+        // because that is what fires EntryBlueprintFound, and addons add
+        // fields to a blueprint from that event. A field an addon adds is a
+        // field the editor sees, so it is a field, not an orphan.
         $tallies = [];
 
         foreach ($collection->entryBlueprints() as $blueprint) {
-            $tallies[$blueprint->handle()] = $this->tally($collection, $blueprint);
+            $tallies[$blueprint->handle()] = $this->tally($collection, $collection->entryBlueprint($blueprint->handle()));
         }
 
         $this->query($collection, $sites)->chunk(self::CHUNK, function ($entries) use (&$tallies, $collection) {

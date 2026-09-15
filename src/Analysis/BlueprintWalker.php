@@ -21,6 +21,13 @@ use Statamic\Fields\Fields;
 final class BlueprintWalker
 {
     /**
+     * Fieldtypes that draw something in the publish form and never store a
+     * value: a heading, a block of HTML, a switch that only reveals other
+     * fields. Counting them would call them dead on every site.
+     */
+    public const DISPLAY_ONLY = ['section', 'html', 'revealer'];
+
+    /**
      * @param  bool  $dated  whether the collection keeps entry dates in filenames
      * @return list<FieldNode>  the top-level fields, each with its subtree
      */
@@ -29,7 +36,7 @@ final class BlueprintWalker
         $nodes = [];
 
         foreach ($blueprint->fields()->all() as $field) {
-            if ($this->storedOutsideData($field, $dated)) {
+            if ($this->neverStored($field) || $this->storedOutsideData($field, $dated)) {
                 continue;
             }
 
@@ -52,6 +59,16 @@ final class BlueprintWalker
         }
 
         return $dated && $field->type() === 'date' && $field->handle() === 'date';
+    }
+
+    /**
+     * Whether Statamic ever saves this field. A field with computed
+     * visibility is dropped from every save (`Fields::values()`), and the
+     * display-only fieldtypes have nothing to save.
+     */
+    private function neverStored(Field $field): bool
+    {
+        return $field->get('visibility') === 'computed' || in_array($field->type(), self::DISPLAY_ONLY, true);
     }
 
     private function node(Field $field, string $path, int $depth): FieldNode
@@ -77,6 +94,10 @@ final class BlueprintWalker
         $nodes = [];
 
         foreach ($this->fields($field->get('fields')) as $child) {
+            if ($this->neverStored($child)) {
+                continue;
+            }
+
             $nodes[] = $this->node($child, FieldPath::child($path, $child->handle()), $depth + 1);
         }
 
@@ -94,6 +115,10 @@ final class BlueprintWalker
             $nodes[$setHandle] = [];
 
             foreach ($this->fields($set['fields'] ?? null) as $child) {
+                if ($this->neverStored($child)) {
+                    continue;
+                }
+
                 $nodes[$setHandle][] = $this->node($child, FieldPath::inSet($path, $setHandle, $child->handle()), $depth + 1);
             }
         }

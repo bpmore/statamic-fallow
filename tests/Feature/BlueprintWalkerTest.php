@@ -74,6 +74,22 @@ test('skips a date field only in a dated collection', function () {
         ->and(array_column(flatPaths((new BlueprintWalker)->walk($blueprint(), dated: false)), 0))->toBe(['date', 'published_on']);
 });
 
+test('skips fields Statamic never saves: computed visibility and display-only types', function () {
+    $blueprint = Blueprint::make()->setContents(['tabs' => ['main' => ['sections' => [['fields' => [
+        ['handle' => 'status', 'field' => ['type' => 'text', 'visibility' => 'computed']],
+        ['handle' => 'hidden_but_saved', 'field' => ['type' => 'text', 'visibility' => 'hidden']],
+        ['handle' => 'heading', 'field' => ['type' => 'section']],
+        ['handle' => 'note', 'field' => ['type' => 'html']],
+        ['handle' => 'more', 'field' => ['type' => 'revealer']],
+        ['handle' => 'rows', 'field' => ['type' => 'grid', 'fields' => [
+            ['handle' => 'divider', 'field' => ['type' => 'section']],
+            ['handle' => 'label', 'field' => ['type' => 'text']],
+        ]]],
+    ]]]]]]);
+
+    expect(array_column(flatPaths((new BlueprintWalker)->walk($blueprint)), 0))->toBe(['hidden_but_saved', 'rows', 'rows.label']);
+});
+
 test('a replicator with no sets and a grid with no fields are leaves', function () {
     $blueprint = Blueprint::make()->setContents(['tabs' => ['main' => ['sections' => [['fields' => [
         ['handle' => 'a', 'field' => ['type' => 'replicator']],
