@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Bpmore\Fallow;
 
+use Bpmore\Fallow\Analysis\Auditor;
+use Bpmore\Fallow\Analysis\BlueprintWalker;
 use Statamic\Providers\AddonServiceProvider;
 
 /**
@@ -35,6 +37,11 @@ class ServiceProvider extends AddonServiceProvider
         parent::register();
 
         $this->mergeConfigFrom(__DIR__.'/../config/fallow.php', 'fallow');
+
+        $this->app->bind(Auditor::class, fn () => new Auditor(
+            new BlueprintWalker,
+            array_map('strval', (array) config('fallow.ignored_keys', [])),
+        ));
     }
 
     public function bootAddon()
