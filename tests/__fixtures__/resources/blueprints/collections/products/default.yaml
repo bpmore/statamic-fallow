@@ -1,0 +1,16 @@
+title: Default
+tabs:
+  main:
+    sections:
+      -
+        fields:
+          - handle: name
+            field: { type: text }
+          - handle: tagline
+            field: { type: text }
+          - handle: badge
+            field: { type: text }
+          - handle: sku
+            field: { type: text }
+          - handle: color
+            field: { type: text }

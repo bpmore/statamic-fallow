@@ -1,0 +1,10 @@
+title: Note
+tabs:
+  main:
+    sections:
+      -
+        fields:
+          - handle: title
+            field: { type: text }
+          - handle: summary
+            field: { type: text }

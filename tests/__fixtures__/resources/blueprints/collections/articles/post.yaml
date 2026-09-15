@@ -1,0 +1,40 @@
+title: Post
+tabs:
+  main:
+    sections:
+      -
+        fields:
+          - handle: title
+            field: { type: text }
+          - handle: summary
+            field: { type: text }
+          - handle: sections
+            field:
+              type: replicator
+              sets:
+                main:
+                  sets:
+                    intro:
+                      fields:
+                        - handle: heading
+                          field: { type: text }
+                    quote:
+                      fields:
+                        - handle: body
+                          field: { type: textarea }
+                    callout:
+                      fields:
+                        - handle: body
+                          field: { type: textarea }
+                    unused:
+                      fields:
+                        - handle: label
+                          field: { type: text }
+          - handle: content
+            field:
+              type: bard
+              sets:
+                pull:
+                  fields:
+                    - handle: body
+                      field: { type: textarea }

@@ -1,0 +1,40 @@
+title: Default
+tabs:
+  main:
+    sections:
+      -
+        fields:
+          - handle: title
+            field: { type: text }
+          - handle: subtitle
+            field: { type: text }
+          - handle: promo
+            field: { type: text }
+          - handle: featured
+            field: { type: toggle }
+          - handle: links
+            field:
+              type: grid
+              fields:
+                - handle: label
+                  field: { type: text }
+                - handle: url
+                  field: { type: text }
+          - handle: blocks
+            field:
+              type: replicator
+              sets:
+                main:
+                  sets:
+                    hero:
+                      fields:
+                        - handle: heading
+                          field: { type: text }
+                        - handle: cta
+                          field: { type: text }
+                    quote:
+                      fields:
+                        - handle: body
+                          field: { type: textarea }
+          - handle: body
+            field: { type: bard }
