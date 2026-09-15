@@ -56,5 +56,8 @@
         "sort-packages": true
     },
     "minimum-stability": "stable",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "suggest": {
+        "bpmore/statamic-site-weather": "Shows a Content model band on the Site Weather dashboard tile, read from a saved audit."
+    }
 }

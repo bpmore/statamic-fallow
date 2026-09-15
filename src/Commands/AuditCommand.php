@@ -120,6 +120,12 @@ class AuditCommand extends Command
         }
 
         if ($jsonWanted) {
+            // A scheduled audit writing to storage/app/fallow/ on a fresh site
+            // should not fail on the directory not being there yet.
+            if (! is_dir(dirname((string) $path))) {
+                mkdir(dirname((string) $path), 0755, true);
+            }
+
             file_put_contents((string) $path, $report->toJson()."\n");
         }
 

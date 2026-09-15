@@ -44,4 +44,18 @@ return [
 
     'cp_entry_limit' => 5000,
 
+    /*
+    |---------------------------------------------------------------------------
+    | Saved report, for the Site Weather tile
+    |---------------------------------------------------------------------------
+    |
+    | Fallow computes on request and stores nothing, and Site Weather's tile
+    | reads stored results only. If this site saves an audit here - typically
+    | by scheduling `php please fallow:audit --json=storage/app/fallow/audit.json`
+    | - the tile shows a Content model band read from it. Until then the band
+    | says so. Set to null to keep Fallow off the tile entirely.
+    |
+    */
+
+    'report_path' => storage_path('app/fallow/audit.json'),
 ];

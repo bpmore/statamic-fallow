@@ -9,6 +9,21 @@ anything in this package, and nothing leaves the machine.
 
 Statamic 6 and PHP 8.2 or newer.
 
+## On the Site Weather tile
+
+If the free [Site Weather](https://github.com/bpmore/statamic-site-weather)
+addon is installed, Fallow can show a **Content model** band on its dashboard
+tile. Fallow computes on request and stores nothing, and the tile reads stored
+results only, so the band reads an audit this site has saved — schedule one:
+
+```php
+Schedule::command('fallow:audit --json=storage/app/fallow/audit.json')->daily();
+```
+
+Until a report exists the band says exactly that. Change the path with
+`report_path` in `config/fallow.php`, or set it to `null` to stay off the tile.
+Fallow itself still writes nothing; the scheduled command does.
+
 ## Install
 
 ```

@@ -33,6 +33,19 @@ test('--json=path writes the report to the file and keeps stdout human', functio
     unlink($path);
 });
 
+test('--json=path creates the directory when it is not there yet', function () {
+    $path = sys_get_temp_dir().'/fallow-'.uniqid().'/nested/audit.json';
+
+    $code = Artisan::call('statamic:fallow:audit', ['--json' => $path, '--collection' => ['pages']]);
+
+    expect($code)->toBe(0)
+        ->and(file_exists($path))->toBeTrue();
+
+    unlink($path);
+    rmdir(dirname($path));
+    rmdir(dirname($path, 2));
+});
+
 test('--fail-on=dead exits 1 on the pages fixture', function () {
     expect(Artisan::call('statamic:fallow:audit', ['--collection' => ['pages'], '--fail-on' => 'dead']))->toBe(1);
 });

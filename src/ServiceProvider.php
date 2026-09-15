@@ -43,6 +43,12 @@ class ServiceProvider extends AddonServiceProvider
 
         $this->mergeConfigFrom(__DIR__.'/../config/fallow.php', 'fallow');
 
+        // Site Weather's tile, if it is installed. A tag is a string: tagging
+        // the class name instantiates nothing, so without Site Weather the
+        // class is never loaded and the interface it implements is never
+        // looked for.
+        $this->app->tag(Weather\ContentModelContributor::class, 'site-weather.contributors');
+
         $this->app->bind(Auditor::class, fn () => new Auditor(
             new BlueprintWalker,
             array_map('strval', (array) config('fallow.ignored_keys', [])),
