@@ -5,6 +5,35 @@ What changed in each release, and what you have to do about it.
 Versions are `MAJOR.MINOR.PATCH`. Before 1.0 a breaking change raises the
 minor. A change to what a number means, or to the JSON shape, is breaking.
 
+## 0.1.1 - unreleased
+
+Marketplace readiness. Nothing reported changes.
+
+### Fixed
+
+**A brace in content can no longer reach Vue.** The utility page is compiled
+by Vue as a template, so an orphan key or field path holding `{{` would have
+been read as an expression. Every content value the page prints now writes
+braces as entities. No editor can create such a key through the control
+panel; a file on disk can.
+
+**A stray file is gone from the package.** An early test run wrote a JSON
+report to a file named `1` in the repository root, and it was committed.
+
+### Changed
+
+**Requires Statamic 6.31 or newer**, was 6.27. Releases 6.27 to 6.30 carry a
+security advisory that Composer refuses by default, and the suite was never
+run on them. It is green on 6.31.0, 6.32.0, and 6.33.0.
+
+**The Composer artifact is smaller.** The build documents, the test suite,
+and the review skill are export-ignored.
+
+### Added
+
+`LICENSE.md`, a Support section in the README, and a `support` block in
+`composer.json`.
+
 ## 0.1.0 - 2026-09-14
 
 First release. Everything in the build spec, and nothing outside it.
