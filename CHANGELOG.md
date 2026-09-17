@@ -5,7 +5,7 @@ What changed in each release, and what you have to do about it.
 Versions are `MAJOR.MINOR.PATCH`. Before 1.0 a breaking change raises the
 minor. A change to what a number means, or to the JSON shape, is breaking.
 
-## 0.1.1 - unreleased
+## 0.1.1 - 2026-09-17
 
 Marketplace readiness. Nothing reported changes.
 
