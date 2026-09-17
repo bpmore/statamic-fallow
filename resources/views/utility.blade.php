@@ -4,8 +4,9 @@
 
     Statamic compiles a utility's HTML as a Vue template, so Statamic's
     `ui-*` components work here and a literal double brace would be read
-    by Vue. Everything printed is a handle, a path, or a number, none of
-    which can hold a brace.
+    by Vue. Every value that comes from content or config goes through
+    `@plain`, which escapes braces as entities on top of Blade's escaping.
+    Numbers are printed as they are.
 --}}
 
 <ui-header title="Fallow" icon="nature-leaf" />
@@ -16,22 +17,22 @@
 
     @if (count($collections) > 1)
         <div class="flex flex-wrap items-center gap-2">
-            <ui-button size="sm" href="{{ cp_route('utilities.index').'/fallow' }}" text="All collections" @if ($collection === null) variant="primary" @endif />
+            <ui-button size="sm" href="@plain(cp_route('utilities.index').'/fallow')" text="All collections" @if ($collection === null) variant="primary" @endif />
             @foreach ($collections as $handle)
-                <ui-button size="sm" href="{{ cp_route('utilities.index').'/fallow?collection='.$handle }}" text="{{ $handle }}" @if ($collection === $handle) variant="primary" @endif />
+                <ui-button size="sm" href="@plain(cp_route('utilities.index').'/fallow?collection='.$handle)" text="@plain($handle)" @if ($collection === $handle) variant="primary" @endif />
             @endforeach
         </div>
     @endif
 
     @if ($unknown !== null)
         <ui-card-panel heading="Unknown collection">
-            <p>There is no collection called <code>{{ $unknown }}</code>. Pick one above.</p>
+            <p>There is no collection called <code>@plain($unknown)</code>. Pick one above.</p>
         </ui-card-panel>
     @elseif ($tooMany !== null)
         <ui-card-panel heading="Too many entries to analyze here">
             <div class="space-y-2">
                 <p>This scope has {{ number_format($tooMany) }} entry localizations and the control panel analyzes at most {{ number_format($limit) }} while a page loads (<code>cp_entry_limit</code> in <code>config/fallow.php</code>). Run the command instead:</p>
-                <pre class="text-sm">php please fallow:audit{{ $collection === null ? '' : ' --collection='.$collection }}</pre>
+                <pre class="text-sm">php please fallow:audit@plain($collection === null ? '' : ' --collection='.$collection)</pre>
                 <p>Or narrow the page to one collection above.</p>
             </div>
         </ui-card-panel>
@@ -51,7 +52,7 @@
 
         @foreach ($report['collections'] as $c)
             @foreach ($c['blueprints'] as $b)
-                <ui-card-panel heading="{{ $c['handle'] }} / {{ $b['handle'] }}">
+                <ui-card-panel heading="@plain($c['handle']) / @plain($b['handle'])">
                     <div class="space-y-4">
                         <ui-description text="{{ $b['entries_analyzed'] }} entry {{ $b['entries_analyzed'] === 1 ? 'localization' : 'localizations' }} analyzed." />
 
@@ -67,13 +68,13 @@
                             <ui-table-rows>
                                 @foreach ($b['fields'] as $f)
                                     <ui-table-row>
-                                        <ui-table-cell><code>{{ $f['path'] }}</code></ui-table-cell>
-                                        <ui-table-cell>{{ $f['type'] }}</ui-table-cell>
+                                        <ui-table-cell><code>@plain($f['path'])</code></ui-table-cell>
+                                        <ui-table-cell>@plain($f['type'])</ui-table-cell>
                                         <ui-table-cell>{{ $f['filled'] }}</ui-table-cell>
                                         <ui-table-cell>{{ $f['denominator'] }}</ui-table-cell>
                                         <ui-table-cell>{{ $f['fill_rate'] === null ? '-' : number_format($f['fill_rate'], 4) }}</ui-table-cell>
                                         <ui-table-cell>
-                                            <ui-badge text="{{ str_replace('_', ' ', $f['status']) }}" @if ($f['status'] === 'healthy') color="emerald" @elseif ($f['status'] === 'sparse') color="amber" @elseif ($f['status'] === 'dead') color="red" @endif />
+                                            <ui-badge text="@plain(str_replace('_', ' ', $f['status']))" @if ($f['status'] === 'healthy') color="emerald" @elseif ($f['status'] === 'sparse') color="amber" @elseif ($f['status'] === 'dead') color="red" @endif />
                                             @if ($f['always_false'] ?? false)
                                                 <ui-badge text="always false" />
                                             @endif
@@ -91,7 +92,7 @@
                                 <ui-description text="Keys in an entry's own data with no top-level field in this blueprint." />
                                 <ul class="mt-2 space-y-1 text-sm">
                                     @foreach ($b['orphan_keys'] as $o)
-                                        <li><code>{{ $o['key'] }}</code> in {{ $o['entries'] }} {{ $o['entries'] === 1 ? 'entry' : 'entries' }}, for example {{ implode(', ', $o['samples']) }}</li>
+                                        <li><code>@plain($o['key'])</code> in {{ $o['entries'] }} {{ $o['entries'] === 1 ? 'entry' : 'entries' }}, for example @plain(implode(', ', $o['samples']))</li>
                                     @endforeach
                                 </ul>
                             </div>

@@ -9,6 +9,7 @@ use Bpmore\Fallow\Analysis\BlueprintWalker;
 use Bpmore\Fallow\Analysis\Scope;
 use Bpmore\Fallow\Analysis\UnknownScope;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Blade;
 use Statamic\Facades\Collection;
 use Statamic\Facades\Utility;
 use Statamic\Providers\AddonServiceProvider;
@@ -54,6 +55,10 @@ class ServiceProvider extends AddonServiceProvider
         $this->publishes([
             __DIR__.'/../config/fallow.php' => config_path('fallow.php'),
         ], 'fallow-config');
+
+        // `@plain($x)` for any value the utility view prints. See VueSafe
+        // for why Blade's own escaping is not enough there.
+        Blade::directive('plain', fn ($expression) => "<?php echo \\Bpmore\\Fallow\\Support\\VueSafe::text({$expression}); ?>");
 
         // Registering a utility gives it an `access fallow utility`
         // permission of its own, and the route is gated by that. The page

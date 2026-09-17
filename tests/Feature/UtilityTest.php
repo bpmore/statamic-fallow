@@ -65,6 +65,31 @@ test('every state of the page is markup Vue can compile', function () {
     assertVueTemplateIsWellFormed(fallowPage());
 });
 
+test('a brace in content never reaches Vue as a delimiter', function () {
+    // Rendered straight from a report array, because no fixture should
+    // carry a key like this and no editor can create one through the
+    // control panel. A developer's file can, and the page must survive it.
+    $report = audit(['pages']);
+    $block = &$report['collections'][0]['blueprints'][0];
+    $block['orphan_keys'][] = ['key' => '{{ alert(1) }}', 'entries' => 1, 'samples' => ['{{ id }}']];
+    $block['fields'][0]['path'] = 'blocks[{{ hero }}].heading';
+
+    $data = ['collections' => ['pages'], 'collection' => null, 'limit' => 5000, 'unknown' => null, 'tooMany' => null, 'report' => $report];
+
+    $html = view('fallow::utility', $data)->render();
+
+    expect($html)->not->toContain('{{')
+        ->and($html)->toContain('&#123;&#123; alert(1) &#125;&#125;')
+        ->and($html)->toContain('blocks[&#123;&#123; hero &#125;&#125;].heading');
+    assertVueTemplateIsWellFormed($html);
+
+    $html = view('fallow::utility', ['unknown' => '{{ nope }}'] + $data)->render();
+
+    expect($html)->not->toContain('{{')
+        ->and($html)->toContain('&#123;&#123; nope &#125;&#125;');
+    assertVueTemplateIsWellFormed($html);
+});
+
 test('the utility is registered with its handle, titles, description, and an icon', function () {
     $utility = Utility::boot()->find('fallow');
 
