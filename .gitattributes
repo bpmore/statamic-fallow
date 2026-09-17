@@ -1,0 +1,9 @@
+# Kept out of the Composer distribution. The build documents are internal
+# notes, the review skill is Statamic's own file, and neither belongs in a
+# customer's vendor directory.
+/docs export-ignore
+/.agents export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/phpunit.xml export-ignore
+/tests export-ignore
