@@ -7,7 +7,10 @@ blueprint field to claim them.
 It reads. It never writes. No content, blueprint, or config is changed by
 anything in this package, and nothing leaves the machine.
 
-Statamic 6 and PHP 8.2 or newer.
+Statamic 6.31 or newer and PHP 8.2 or newer. The suite runs green on
+Statamic 6.31.0, 6.32.0, and 6.33.0 under PHP 8.4. Earlier 6.x releases carry
+a security advisory that Composer refuses by default, so they are not
+supported.
 
 ## Install
 
