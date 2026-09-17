@@ -19,7 +19,7 @@
     ],
     "require": {
         "php": "^8.2",
-        "statamic/cms": "^6.27"
+        "statamic/cms": "^6.31"
     },
     "require-dev": {
         "orchestra/testbench": "^10.11 || ^11.0",
