@@ -17,6 +17,10 @@
             "homepage": "https://hada.farm"
         }
     ],
+    "support": {
+        "issues": "https://github.com/bpmore/statamic-fallow/issues",
+        "source": "https://github.com/bpmore/statamic-fallow"
+    },
     "require": {
         "php": "^8.2",
         "statamic/cms": "^6.31"

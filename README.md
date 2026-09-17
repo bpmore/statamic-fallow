@@ -180,6 +180,26 @@ audited. Only entries in collections. Fallow does not check that a stored
 value's shape matches the fieldtype, and it never augments a value: every
 number comes from raw stored data.
 
+## Support
+
+Report a bug or ask a question by opening an issue:
+
+<https://github.com/bpmore/statamic-fallow/issues>
+
+Every bug report gets a reply. Aim for a few working days. There is no
+guaranteed response time, and nothing here phones home or runs on a schedule,
+so a support problem is never an outage.
+
+A useful report says which version of the addon and of Statamic you are on,
+and includes the JSON from `php please fallow:audit --json` for the collection
+in question if you can share it. `composer show bpmore/statamic-fallow
+statamic/cms` gives the versions.
+
+## Licence
+
+Proprietary. See `LICENSE.md`. One licence covers one production site; local
+development and CI are free.
+
 ## Tests
 
 ```
