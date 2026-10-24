@@ -5,6 +5,17 @@ What changed in each release, and what you have to do about it.
 Versions are `MAJOR.MINOR.PATCH`. Before 1.0 a breaking change raises the
 minor. A change to what a number means, or to the JSON shape, is breaking.
 
+## 0.1.2 - 2026-10-23
+
+Packaging only. Nothing reported changes.
+
+### Fixed
+
+**`NOTES.md` is no longer in the package.** It records the Statamic internals
+Fallow relies on and belongs with the repository, not in a customer's vendor
+directory. 0.1.1 said the build documents were export-ignored; this one was
+missed.
+
 ## 0.1.1 - 2026-09-17
 
 Marketplace readiness. Nothing reported changes.
